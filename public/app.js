@@ -1,9 +1,12 @@
+//  Thumbnails do YouTube
 const ytThumbHD = (id) => `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
 const ytThumbFallback = (id) => `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
 
+//  Base da API 
 const API_ROOT = "http://localhost:3000";
-const API_URL  = `${API_ROOT}/conteudos`;
+const API_URL = `${API_ROOT}/conteudos`;
 
+// Helper para fetch com tratamento simples de erro 
 async function apiRequest(url, options) {
   const res = await fetch(url, options);
   if (!res.ok) {
@@ -13,42 +16,39 @@ async function apiRequest(url, options) {
   try { return await res.json(); } catch { return null; }
 }
 
+// CRUD reusável 
 const api = {
   list: async (query = {}) => {
     const params = new URLSearchParams(query);
     return apiRequest(`${API_URL}?${params.toString()}`);
   },
   get: async (id) => apiRequest(`${API_URL}/${id}`),
-  create: async (data) =>
-    apiRequest(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    }),
-
-  update: async (id, data) =>
-    apiRequest(`${API_URL}/${id}`, {
-      method: "PUT", 
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    }),
-
-  remove: async (id) =>
-    apiRequest(`${API_URL}/${id}`, { method: "DELETE" })
+  create: async (data) => apiRequest(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }),
+  update: async (id, data) => apiRequest(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }),
+  remove: async (id) => apiRequest(`${API_URL}/${id}`, { method: "DELETE" })
 };
 
+//  Estado simples compartilhado 
 const state = {
-  itens: [],
-  filtroCategoria: "Todas"
+  itens: [],               
+  filtroCategoria: "Todas" 
 };
 
+// HOME (carrossel + grid) 
 async function renderCarousel() {
   const track = document.querySelector("#fwc-track");
   const dots = document.querySelector("#fwc-dots");
   if (!track || !dots) return;
 
   const destaques = state.itens.filter(a => !!a.destaque);
-
   track.innerHTML = destaques.map((a, i) => `
     <li class="fwc-slide">
       <a href="detalhes.html?id=${a.id}" aria-label="${a.titulo}">
@@ -59,13 +59,12 @@ async function renderCarousel() {
       </a>
     </li>
   `).join("");
-
   track.style.width = `${destaques.length * 100}%`;
   track.style.setProperty('--slides', destaques.length);
 
-  dots.innerHTML = destaques.map((_, i) => `
-    <button class="fwc-dot" data-idx="${i}" aria-label="Ir para slide ${i + 1}"></button>
-  `).join("");
+  const dotsHtml = destaques.map((_, i) =>
+    `<button class="fwc-dot" data-idx="${i}" aria-label="Ir para slide ${i + 1}"></button>`).join("");
+  dots.innerHTML = dotsHtml;
 
   let idx = 0;
   const slides = Array.from(track.querySelectorAll(".fwc-slide"));
@@ -109,8 +108,6 @@ function renderTilesHome() {
         </div>
       </a>
       <div class="tile-actions">
-        <!-- Motivo: professor exige DELETE.
-             Botão visível e fácil de testar, com delegation no grid. -->
         <button class="btn btn-danger btn-small js-del" data-id="${a.id}">Excluir</button>
       </div>
     </li>
@@ -120,20 +117,19 @@ function renderTilesHome() {
     const btn = e.target.closest(".js-del");
     if (!btn) return;
     e.preventDefault();
-
     const id = btn.dataset.id;
     if (!confirm("Excluir este conteúdo?")) return;
-
     try {
-      await api.remove(id);    
+      await api.remove(id);
       state.itens = state.itens.filter(x => String(x.id) !== String(id));
-      renderTilesHome();         
+      renderTilesHome();
     } catch (err) {
       alert("Falha ao excluir: " + err.message);
     }
   });
 }
 
+// CONTEÚDOS (filtro por categoria)
 function initConteudosPage() {
   const filterBar = document.getElementById("filterBar");
   const grid = document.getElementById("grid");
@@ -149,7 +145,6 @@ function initConteudosPage() {
         ${c}
       </button>
     `).join("");
-
     filterBar.querySelectorAll("button").forEach(btn => {
       btn.addEventListener("click", () => {
         catAtual = btn.dataset.cat;
@@ -203,6 +198,7 @@ function initConteudosPage() {
   });
 }
 
+// CATEGORIAS (agrupado) 
 function initCategoriasPage() {
   const wrap = document.getElementById("catsWrap");
   if (!wrap) return;
@@ -237,24 +233,20 @@ function initCategoriasPage() {
   `).join("");
 }
 
+// DETALHES (ver + editar + excluir) 
 async function initDetalhesPage() {
   const wrap = document.getElementById("detalhe");
   if (!wrap) return;
 
-  const params = new URLSearchParams(location.search);
-  const id = Number(params.get("id"));
-
+  const id = Number(new URLSearchParams(location.search).get("id"));
   let item;
   try {
-    item = await api.get(id);        
+    item = await api.get(id);
   } catch (err) {
     wrap.innerHTML = `<p>Erro ao carregar: ${err.message}</p>`;
     return;
   }
-  if (!item?.id) {
-    wrap.innerHTML = "<p>Item não encontrado.</p>";
-    return;
-  }
+  if (!item?.id) { wrap.innerHTML = "<p>Item não encontrado.</p>"; return; }
 
   wrap.innerHTML = `
     <header class="featured" style="text-align:center">
@@ -284,7 +276,6 @@ async function initDetalhesPage() {
       </div>
       <hr style="margin: 16px 0; border-color: rgba(255,255,255,.12)">
       <form id="formEdicao" class="form-grid" style="display:none" novalidate>
-        <!-- Motivo: professor exige PUT/atualização. Inputs já nascidos com o item. -->
         <label>Título <input required name="titulo" value="${item.titulo}"></label>
         <label>Resumo <textarea required name="resumo">${item.resumo}</textarea></label>
         <label>Categoria
@@ -316,20 +307,12 @@ async function initDetalhesPage() {
     form.style.display = form.style.display === "none" ? "grid" : "none";
     form.scrollIntoView({ behavior: "smooth", block: "center" });
   });
-
-  wrap.querySelector("#btnCancelar").addEventListener("click", () => {
-    form.reset();
-    form.style.display = "none";
-  });
+  wrap.querySelector("#btnCancelar").addEventListener("click", () => { form.reset(); form.style.display = "none"; });
 
   wrap.querySelector("#btnExcluir").addEventListener("click", async () => {
     if (!confirm("Tem certeza que deseja excluir este conteúdo?")) return;
-    try {
-      await api.remove(item.id);    
-      location.href = "index.html";  
-    } catch (err) {
-      alert("Falha ao excluir: " + err.message);
-    }
+    try { await api.remove(item.id); location.href = "index.html"; }
+    catch (err) { alert("Falha ao excluir: " + err.message); }
   });
 
   form.addEventListener("submit", async (e) => {
@@ -345,67 +328,124 @@ async function initDetalhesPage() {
       videoId: String(fd.get("videoId")).trim(),
       destaque: String(fd.get("destaque")) === "true"
     };
-    try {
-      await api.update(item.id, atualizado);  
-      alert("Atualizado com sucesso!");
-      location.reload();
-    } catch (err) {
-      alert("Falha ao atualizar: " + err.message);
-    }
+    try { await api.update(item.id, atualizado); alert("Atualizado com sucesso!"); location.reload(); }
+    catch (err) { alert("Falha ao atualizar: " + err.message); }
   });
 }
 
+//  APRESENTAÇÃO DINÂMICA (Chart.js)
+function initChartsPage() {
+  const canCat = document.getElementById("chartCategorias");
+  const canMon = document.getElementById("chartMensal");
+  if (!canCat || !canMon) return; 
+
+  const byCategory = state.itens.reduce((acc, it) => {
+    acc[it.categoria] = (acc[it.categoria] || 0) + 1;
+    return acc;
+  }, {});
+  const catLabels = Object.keys(byCategory).sort();
+  const catCounts = catLabels.map(k => byCategory[k]);
+
+  const byMonth = state.itens.reduce((acc, it) => {
+    const ym = (it.data || "").slice(0, 7);
+    if (!ym) return acc;
+    acc[ym] = (acc[ym] || 0) + 1;
+    return acc;
+  }, {});
+  const monLabels = Object.keys(byMonth).sort();      
+  const monCounts = monLabels.map(k => byMonth[k]);       
+
+  //  Criação dos gráficos (Chart.js) 
+  const catChart = new Chart(canCat.getContext("2d"), {
+    type: "pie",
+    data: {
+      labels: catLabels,
+      datasets: [{ data: catCounts }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "bottom" },
+        title: { display: false }
+      }
+    }
+  });
+
+  const monChart = new Chart(canMon.getContext("2d"), {
+    type: "bar",
+    data: {
+      labels: monLabels,
+      datasets: [{ label: "Publicações", data: monCounts }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0 } }
+      }
+    }
+  });
+
+  //  Botão "Atualizar dados"
+  document.getElementById("btnRefreshCharts")?.addEventListener("click", async () => {
+    try {
+      state.itens = await api.list({ _sort: "id", _order: "desc" }); 
+    } catch (err) {
+      alert("Falha ao atualizar dados: " + err.message);
+      return;
+    }
+    const byCategory2 = state.itens.reduce((acc, it) => (acc[it.categoria] = (acc[it.categoria] || 0) + 1, acc), {});
+    const labels2 = Object.keys(byCategory2).sort();
+    const counts2 = labels2.map(k => byCategory2[k]);
+
+    const byMonth2 = state.itens.reduce((acc, it) => (acc[(it.data || "").slice(0, 7)] = (acc[(it.data || "").slice(0, 7)] || 0) + 1, acc), {});
+    const mLabels2 = Object.keys(byMonth2).sort();
+    const mCounts2 = mLabels2.map(k => byMonth2[k]);
+
+    // Atualiza os gráficos existentes 
+    catChart.data.labels = labels2;
+    catChart.data.datasets[0].data = counts2;
+    catChart.update();
+
+    monChart.data.labels = mLabels2;
+    monChart.data.datasets[0].data = mCounts2;
+    monChart.update();
+  });
+}
+
+// BOOT 
 async function boot() {
   try {
     state.itens = await api.list({ _sort: "id", _order: "desc" });
   } catch (err) {
     console.error(err);
-    alert("Falha ao carregar dados da API. Verifique se o JSON Server está rodando (npm run dev).");
+    alert("Falha ao carregar dados da API. Verifique se o JSON Server está rodando (npm start).");
     return;
   }
 
-  if (document.getElementById("fwc-track")) {  
-    await renderCarousel();
-    renderTilesHome();
-  }
-  if (document.getElementById("grid")) {      
-    initConteudosPage();
-  }
-  if (document.getElementById("catsWrap")) {  
-    initCategoriasPage();
-  }
-  if (document.getElementById("detalhe")) { 
-    initDetalhesPage();
+  if (document.getElementById("fwc-track")) { await renderCarousel(); renderTilesHome(); }
+  if (document.getElementById("grid")) { initConteudosPage(); }
+  if (document.getElementById("catsWrap")) { initCategoriasPage(); }
+  if (document.getElementById("detalhe")) { initDetalhesPage(); }
+  if (document.getElementById("chartCategorias") && document.getElementById("chartMensal")) {
+    initChartsPage();
   }
 }
 
+// Menu móvel 
 document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.querySelector('.nav-toggle');
   const nav = document.getElementById('mainNav');
   if (!toggle || !nav) return;
 
-  const close = () => {
-    nav.classList.remove('open');
-    toggle.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-    document.body.classList.remove('menu-open');
-  };
-  const open = () => {
-    nav.classList.add('open');
-    toggle.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-    document.body.classList.add('menu-open');
-  };
+  const close = () => { nav.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; document.body.classList.remove('menu-open'); };
+  const open = () => { nav.classList.add('open'); toggle.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; document.body.classList.add('menu-open'); };
 
   toggle.addEventListener('click', () => nav.classList.contains('open') ? close() : open());
   nav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
   window.addEventListener('resize', () => { if (window.innerWidth > 860) close(); });
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-
   document.addEventListener('click', (e) => {
-    if (nav.classList.contains('open') && !nav.contains(e.target) && !toggle.contains(e.target)) {
-      close();
-    }
+    if (nav.classList.contains('open') && !nav.contains(e.target) && !toggle.contains(e.target)) close();
   });
 });
 
