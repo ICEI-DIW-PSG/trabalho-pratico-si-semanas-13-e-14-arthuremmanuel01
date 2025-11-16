@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fit Web • Apresentação Dinâmica</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        /*  layout simples e consistente aos gráficos */
+        .page-header {
+            max-width: var(--container);
+            margin: 0 auto;
+            padding: 8px clamp(16px, 3vw, 40px) 0;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: .35em;
+            color: var(--brand);
+            font-size: var(--h2);
+        }
+
+        .charts-grid {
+            max-width: var(--container);
+            margin: 0 auto;
+            padding: 0 clamp(16px, 3vw, 40px) 24px;
+            display: grid;
+            gap: 18px;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .chart-card header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+
+        .chart-card h2 {
+            font-size: var(--h4);
+            margin: 0;
+            color: var(--brand);
+            text-transform: uppercase;
+            letter-spacing: .2em;
+        }
+
+        .chart-help {
+            color: var(--muted);
+            font-size: .95rem;
+            margin: 6px 0 0 0;
+        }
+
+        .chart-canvas-wrap {
+            position: relative;
+            min-height: 320px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Cabeçalho padrão do site -->
+    <header class="site-header" id="topo" aria-label="Cabeçalho">
+        <div class="container header-wrap">
+            <a href="index.html#inicio" class="brand" aria-label="Fit Web - Página Inicial">
+                <img src="imgs/logo.png" alt="Fit Web - Treining Hub" width="250">
+            </a>
+            <button class="nav-toggle" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menu">
+                <span class="lines" aria-hidden="true"></span>
+            </button>
+            <nav class="main-nav" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html#inicio">Início</a></li>
+                    <li><a href="conteudos.html">Conteúdos</a></li>
+                    <li><a href="categorias.html">Categorias</a></li>
+                    <!-- acesso direto à apresentação dinâmica -->
+                    <li><a aria-current="page" href="analises.html">Apresentação</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content-bg" aria-label="Conteúdo Principal">
+        <div class="page-header">
+            <h1>Apresentação dinâmica de dados</h1>
+            <p class="chart-help">
+                Os gráficos abaixo são montados automaticamente a partir dos dados do JSON Server
+                (<code>/conteudos</code>).
+                Crie/edite/exclua itens e clique em <strong>Atualizar dados</strong> para ver os resultados mudarem.
+            </p>
+        </div>
+
+        <section class="charts-grid">
+            <article class="chart-card">
+                <header>
+                    <h2>Conteúdos por categoria</h2>
+                    <!--  botão para reprocessar os dados após CRUD -->
+                    <button class="btn btn-outline btn-small" id="btnRefreshCharts">Atualizar dados</button>
+                </header>
+                <div class="chart-canvas-wrap">
+                    <!--  destino do gráfico de pizza do Chart.js -->
+                    <canvas id="chartCategorias" aria-label="Gráfico de pizza por categoria" role="img"></canvas>
+                </div>
+            </article>
+
+            <article class="chart-card">
+                <header>
+                    <h2>Publicações por mês</h2>
+                </header>
+                <div class="chart-canvas-wrap">
+                    <!-- destino do gráfico de barras do Chart.js-->
+                    <canvas id="chartMensal" aria-label="Gráfico de barras por mês" role="img"></canvas>
+                </div>
+                <p class="chart-help">Formato do eixo X: <code>AAAA-MM</code> (mês/ano da data de publicação).</p>
+            </article>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>© Arthur Emmanuel Oliveira Marinho</p>
+            <address><a href="mailto:aeomarinho@sga.pucminas.br">aeomarinho@sga.pucminas.br</a></address>
+        </div>
+    </footer>
+
+    <!-- JS principal do projeto. Ele detecta esta página e desenha os gráficos. -->
+    <script src="app.js" defer></script>
+</body>
+
+</html>
