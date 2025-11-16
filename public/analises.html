@@ -6,11 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fit Web • Apresentação Dinâmica</title>
 
+    <!-- Chart.js para construção dos gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <link rel="stylesheet" href="style.css" />
     <style>
-        /*  layout simples e consistente aos gráficos */
+        /* Cabeçalho visual da página  */
         .page-header {
             max-width: var(--container);
             margin: 0 auto;
@@ -25,12 +26,20 @@
             font-size: var(--h2);
         }
 
+        /* Grid dos gráficos */
         .charts-grid {
             max-width: var(--container);
             margin: 0 auto;
             padding: 0 clamp(16px, 3vw, 40px) 24px;
             display: grid;
-            gap: 18px;
+            gap: 14px;
+            grid-template-columns: repeat(2, minmax(280px, 1fr));
+        }
+
+        @media (max-width: 900px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .chart-card {
@@ -64,13 +73,20 @@
 
         .chart-canvas-wrap {
             position: relative;
-            min-height: 320px;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+        }
+
+        @media (max-width: 420px) {
+            .chart-canvas-wrap {
+                aspect-ratio: 1 / 1;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Cabeçalho padrão do site -->
+    <!-- Cabeçalho padrão do site  -->
     <header class="site-header" id="topo" aria-label="Cabeçalho">
         <div class="container header-wrap">
             <a href="index.html#inicio" class="brand" aria-label="Fit Web - Página Inicial">
@@ -84,7 +100,6 @@
                     <li><a href="index.html#inicio">Início</a></li>
                     <li><a href="conteudos.html">Conteúdos</a></li>
                     <li><a href="categorias.html">Categorias</a></li>
-                    <!-- acesso direto à apresentação dinâmica -->
                     <li><a aria-current="page" href="analises.html">Apresentação</a></li>
                     <li><a href="contato.html">Contato</a></li>
                 </ul>
@@ -98,7 +113,7 @@
             <p class="chart-help">
                 Os gráficos abaixo são montados automaticamente a partir dos dados do JSON Server
                 (<code>/conteudos</code>).
-                Crie/edite/exclua itens e clique em <strong>Atualizar dados</strong> para ver os resultados mudarem.
+                Crie/edite/exclua itens e clique em <strong>Atualizar dados</strong> para refletir as mudanças.
             </p>
         </div>
 
@@ -106,11 +121,10 @@
             <article class="chart-card">
                 <header>
                     <h2>Conteúdos por categoria</h2>
-                    <!--  botão para reprocessar os dados após CRUD -->
+                    <!-- Botão para recarregar os dados sem recarregar a página -->
                     <button class="btn btn-outline btn-small" id="btnRefreshCharts">Atualizar dados</button>
                 </header>
                 <div class="chart-canvas-wrap">
-                    <!--  destino do gráfico de pizza do Chart.js -->
                     <canvas id="chartCategorias" aria-label="Gráfico de pizza por categoria" role="img"></canvas>
                 </div>
             </article>
@@ -120,7 +134,6 @@
                     <h2>Publicações por mês</h2>
                 </header>
                 <div class="chart-canvas-wrap">
-                    <!-- destino do gráfico de barras do Chart.js-->
                     <canvas id="chartMensal" aria-label="Gráfico de barras por mês" role="img"></canvas>
                 </div>
                 <p class="chart-help">Formato do eixo X: <code>AAAA-MM</code> (mês/ano da data de publicação).</p>
@@ -135,7 +148,6 @@
         </div>
     </footer>
 
-    <!-- JS principal do projeto. Ele detecta esta página e desenha os gráficos. -->
     <script src="app.js" defer></script>
 </body>
 

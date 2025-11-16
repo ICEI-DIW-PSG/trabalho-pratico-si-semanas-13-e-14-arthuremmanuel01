@@ -1,12 +1,12 @@
-//  Thumbnails do YouTube
+// Thumbnails do YouTube 
 const ytThumbHD = (id) => `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
 const ytThumbFallback = (id) => `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
 
-//  Base da API 
+// Base da API 
 const API_ROOT = "http://localhost:3000";
 const API_URL = `${API_ROOT}/conteudos`;
 
-// Helper para fetch com tratamento simples de erro 
+// Fetch helper com tratamento simples
 async function apiRequest(url, options) {
   const res = await fetch(url, options);
   if (!res.ok) {
@@ -16,33 +16,22 @@ async function apiRequest(url, options) {
   try { return await res.json(); } catch { return null; }
 }
 
-// CRUD reusável 
+// CRUD 
 const api = {
-  list: async (query = {}) => {
-    const params = new URLSearchParams(query);
-    return apiRequest(`${API_URL}?${params.toString()}`);
-  },
+  list: async (query = {}) => apiRequest(`${API_URL}?${new URLSearchParams(query).toString()}`),
   get: async (id) => apiRequest(`${API_URL}/${id}`),
   create: async (data) => apiRequest(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
   }),
   update: async (id, data) => apiRequest(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data)
   }),
   remove: async (id) => apiRequest(`${API_URL}/${id}`, { method: "DELETE" })
 };
 
-//  Estado simples compartilhado 
-const state = {
-  itens: [],
-  filtroCategoria: "Todas"
-};
+const state = { itens: [], filtroCategoria: "Todas" };
 
-// HOME (carrossel + grid) 
+/*  HOME   */
 async function renderCarousel() {
   const track = document.querySelector("#fwc-track");
   const dots = document.querySelector("#fwc-dots");
@@ -93,7 +82,6 @@ async function renderCarousel() {
 function renderTilesHome() {
   const grid = document.querySelector("#tiles-grid");
   if (!grid) return;
-
   grid.innerHTML = state.itens.map(a => `
     <li class="tile">
       <a class="tile-link" href="detalhes.html?id=${a.id}" aria-label="${a.titulo}">
@@ -129,7 +117,7 @@ function renderTilesHome() {
   });
 }
 
-// CONTEÚDOS (filtro por categoria)
+/*  CONTEÚDOS */
 function initConteudosPage() {
   const filterBar = document.getElementById("filterBar");
   const grid = document.getElementById("grid");
@@ -198,7 +186,7 @@ function initConteudosPage() {
   });
 }
 
-// CATEGORIAS (agrupado) 
+/*  CATEGORIAS  */
 function initCategoriasPage() {
   const wrap = document.getElementById("catsWrap");
   if (!wrap) return;
@@ -233,19 +221,15 @@ function initCategoriasPage() {
   `).join("");
 }
 
-// DETALHES (ver + editar + excluir) 
+/*  DETALHES  */
 async function initDetalhesPage() {
   const wrap = document.getElementById("detalhe");
   if (!wrap) return;
 
   const id = Number(new URLSearchParams(location.search).get("id"));
   let item;
-  try {
-    item = await api.get(id);
-  } catch (err) {
-    wrap.innerHTML = `<p>Erro ao carregar: ${err.message}</p>`;
-    return;
-  }
+  try { item = await api.get(id); }
+  catch (err) { wrap.innerHTML = `<p>Erro ao carregar: ${err.message}</p>`; return; }
   if (!item?.id) { wrap.innerHTML = "<p>Item não encontrado.</p>"; return; }
 
   wrap.innerHTML = `
@@ -333,66 +317,64 @@ async function initDetalhesPage() {
   });
 }
 
-//  APRESENTAÇÃO DINÂMICA (Chart.js)
+/*  CHARTS */
 function initChartsPage() {
   const canCat = document.getElementById("chartCategorias");
   const canMon = document.getElementById("chartMensal");
-  if (!canCat || !canMon) return;
+  if (!canCat || !canMon) return; // não é a página de análises
 
-  const byCategory = state.itens.reduce((acc, it) => {
-    acc[it.categoria] = (acc[it.categoria] || 0) + 1;
-    return acc;
-  }, {});
+  // Agregações 
+  const byCategory = state.itens.reduce((acc, it) => (acc[it.categoria] = (acc[it.categoria] || 0) + 1, acc), {});
   const catLabels = Object.keys(byCategory).sort();
   const catCounts = catLabels.map(k => byCategory[k]);
 
   const byMonth = state.itens.reduce((acc, it) => {
-    const ym = (it.data || "").slice(0, 7);
-    if (!ym) return acc;
-    acc[ym] = (acc[ym] || 0) + 1;
-    return acc;
+    const ym = (it.data || "").slice(0, 7); if (!ym) return acc;
+    acc[ym] = (acc[ym] || 0) + 1; return acc;
   }, {});
   const monLabels = Object.keys(byMonth).sort();
   const monCounts = monLabels.map(k => byMonth[k]);
 
-  //  Criação dos gráficos (Chart.js) 
+  const smallLegend = {
+    position: "bottom",
+    labels: { boxWidth: 10, padding: 12, font: { size: 12 } } 
+  };
+
+  //  Gráfico de Pizza por Categoria 
   const catChart = new Chart(canCat.getContext("2d"), {
     type: "pie",
-    data: {
-      labels: catLabels,
-      datasets: [{ data: catCounts }]
-    },
+    data: { labels: catLabels, datasets: [{ data: catCounts }] },
     options: {
       responsive: true,
-      plugins: {
-        legend: { position: "bottom" },
-        title: { display: false }
-      }
+      maintainAspectRatio: true,  
+      aspectRatio: 1.2,            
+      plugins: { legend: smallLegend, title: { display: false } },
+      layout: { padding: { top: 6, bottom: 6, left: 6, right: 6 } }
     }
   });
 
+  //  Gráfico de Barras por Mês 
   const monChart = new Chart(canMon.getContext("2d"), {
     type: "bar",
-    data: {
-      labels: monLabels,
-      datasets: [{ label: "Publicações", data: monCounts }]
-    },
+    data: { labels: monLabels, datasets: [{ label: "Publicações", data: monCounts }] },
     options: {
       responsive: true,
+      maintainAspectRatio: true, 
+      aspectRatio: 1.25,         
+      plugins: { legend: smallLegend, title: { display: false } },
+      layout: { padding: { top: 6, bottom: 6, left: 6, right: 6 } },
       scales: {
-        y: { beginAtZero: true, ticks: { precision: 0 } }
+        y: { beginAtZero: true, ticks: { precision: 0, font: { size: 11 } } },
+        x: { ticks: { font: { size: 11 } } }                                  
       }
     }
   });
 
-  //  Botão "Atualizar dados"
+  // Botão de atualização 
   document.getElementById("btnRefreshCharts")?.addEventListener("click", async () => {
-    try {
-      state.itens = await api.list({ _sort: "id", _order: "desc" });
-    } catch (err) {
-      alert("Falha ao atualizar dados: " + err.message);
-      return;
-    }
+    try { state.itens = await api.list({ _sort: "id", _order: "desc" }); }
+    catch (err) { alert("Falha ao atualizar dados: " + err.message); return; }
+
     const byCategory2 = state.itens.reduce((acc, it) => (acc[it.categoria] = (acc[it.categoria] || 0) + 1, acc), {});
     const labels2 = Object.keys(byCategory2).sort();
     const counts2 = labels2.map(k => byCategory2[k]);
@@ -401,7 +383,6 @@ function initChartsPage() {
     const mLabels2 = Object.keys(byMonth2).sort();
     const mCounts2 = mLabels2.map(k => byMonth2[k]);
 
-    // Atualiza os gráficos existentes 
     catChart.data.labels = labels2;
     catChart.data.datasets[0].data = counts2;
     catChart.update();
@@ -412,16 +393,14 @@ function initChartsPage() {
   });
 }
 
-// BOOT 
+/*  BOOT  */
 async function boot() {
-  try {
-    state.itens = await api.list({ _sort: "id", _order: "desc" });
-  } catch (err) {
+  try { state.itens = await api.list({ _sort: "id", _order: "desc" }); }
+  catch (err) {
     console.error(err);
     alert("Falha ao carregar dados da API. Verifique se o JSON Server está rodando (npm start).");
     return;
   }
-
   if (document.getElementById("fwc-track")) { await renderCarousel(); renderTilesHome(); }
   if (document.getElementById("grid")) { initConteudosPage(); }
   if (document.getElementById("catsWrap")) { initCategoriasPage(); }
@@ -431,7 +410,7 @@ async function boot() {
   }
 }
 
-// Menu móvel 
+/* Menu mobile */
 document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.querySelector('.nav-toggle');
   const nav = document.getElementById('mainNav');
