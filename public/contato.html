@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fit Web • Contato</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        .page-header {
+            max-width: var(--container);
+            margin: 0 auto;
+            padding: 8px clamp(16px, 3vw, 40px) 0;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: .35em;
+            color: var(--brand);
+            font-size: var(--h2);
+        }
+
+        .notice {
+            margin-top: 12px;
+            text-align: center;
+            color: var(--brand);
+            font-weight: 700;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header" id="topo" aria-label="Cabeçalho">
+        <div class="container header-wrap">
+            <a href="index.html#inicio" class="brand" aria-label="Fit Web - Página Inicial">
+                <img src="imgs/logo.png" alt="Fit Web - Treining Hub" width="250">
+            </a>
+
+            <!-- Botão hambúrguer acessível -->
+            <button class="nav-toggle" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menu">
+                <span class="lines" aria-hidden="true"></span>
+            </button>
+
+            <nav class="main-nav" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html#inicio">Início</a></li>
+                    <li><a href="conteudos.html">Conteúdos</a></li>
+                    <li><a href="categorias.html">Categorias</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content-bg" aria-label="Conteúdo Principal">
+        <div class="page-header">
+            <h1>Contato</h1>
+        </div>
+
+        <div class="container">
+            <section class="contact-cta" aria-labelledby="ttl-contato">
+                <h3 id="ttl-contato">Fale Conosco</h3>
+
+                <form id="formContato" class="contact-form" novalidate>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="c-nome">Nome</label>
+                            <input type="text" id="c-nome" name="nome" placeholder="Seu nome" autocomplete="name"
+                                required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="c-telefone">Telefone</label>
+                            <input type="tel" id="c-telefone" name="telefone" placeholder="(31) 98765-4321"
+                                pattern="\\(?\\d{2}\\)?\\s?\\d{4,5}-?\\d{4}">
+                        </div>
+
+                        <div class="form-field full">
+                            <label for="c-email">E-mail</label>
+                            <input type="email" id="c-email" name="email" placeholder="voce@exemplo.com"
+                                autocomplete="email" required>
+                        </div>
+
+                        <div class="form-field full">
+                            <label for="c-assunto">Assunto</label>
+                            <input type="text" id="c-assunto" name="assunto"
+                                placeholder="Ex.: Parceria / Sugestão / Dúvida" required>
+                        </div>
+
+                        <div class="form-field full">
+                            <label for="c-msg">Mensagem</label>
+                            <textarea id="c-msg" name="mensagem" rows="6" placeholder="Como podemos ajudar?"
+                                required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-primario" type="submit">Enviar mensagem</button>
+                    </div>
+
+                    <p id="notice" class="notice">Mensagem enviada! Em breve entraremos em contato. ✔️</p>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>© Arthur Emmanuel Oliveira Marinho</p>
+            <address><a href="mailto:aeomarinho@sga.pucminas.br">aeomarinho@sga.pucminas.br</a></address>
+        </div>
+    </footer>
+
+    <script>
+        const form = document.getElementById('formContato');
+        const notice = document.getElementById('notice');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const nome = form.querySelector('#c-nome');
+            const email = form.querySelector('#c-email');
+            const assunto = form.querySelector('#c-assunto');
+            const msg = form.querySelector('#c-msg');
+
+            if (!nome.value.trim()) { nome.focus(); return; }
+            if (!email.checkValidity()) { email.focus(); return; }
+            if (!assunto.value.trim()) { assunto.focus(); return; }
+            if (!msg.value.trim()) { msg.focus(); return; }
+
+            form.reset();
+            notice.style.display = 'block';
+            notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    </script>
+</body>
+
+</html>

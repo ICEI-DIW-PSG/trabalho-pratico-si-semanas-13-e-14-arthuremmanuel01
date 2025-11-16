@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit Web • Treining Hub</title>
+    <meta name="description" content="Blog com vídeo aulas e posts sobre musculação">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Anton&family=Hanken+Grotesk:wght@400;500;600;700&family=Montserrat:wght@500;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- ================= Cabeçalho ================= -->
+    <header class="site-header" id="topo" aria-label="Cabeçalho">
+        <div class="container header-wrap">
+            <a href="index.html#inicio" class="brand" aria-label="Fit Web - Página Inicial">
+                <img src="imgs/logo.png" alt="Fit Web - Treining Hub" width="250">
+            </a>
+
+            <!-- Botão hambúrguer acessível -->
+            <button class="nav-toggle" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menu">
+                <span class="lines" aria-hidden="true"></span>
+            </button>
+
+            <nav class="main-nav" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html#inicio">Início</a></li>
+                    <li><a href="conteudos.html">Conteúdos</a></li>
+                    <li><a href="categorias.html">Categorias</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ================= CONTEÚDO ================= -->
+    <main id="conteudo" class="content-bg" aria-label="Conteúdo principal">
+        <div class="container home-flow">
+            <section id="destaques" class="home-section" aria-labelledby="ttl-destaques">
+                <h2 id="ttl-destaques">Itens em Destaque</h2>
+                <div class="fw-carousel" aria-label="Itens em destaque">
+                    <div class="fwc-viewport">
+                        <ul id="fwc-track" class="fwc-track"></ul>
+                    </div>
+                    <button class="fwc-nav prev" aria-label="Anterior">‹</button>
+                    <button class="fwc-nav next" aria-label="Próximo">›</button>
+                    <div id="fwc-dots" class="fwc-dots" role="tablist"></div>
+                </div>
+            </section>
+
+            <section id="lista" class="home-section" aria-labelledby="ttl-lista">
+                <div class="toolbar">
+                    <h3 id="ttl-lista">Todos os itens</h3>
+                    <a class="btn btn-primary" href="cadastro_conteudos.html">+ Novo conteúdo</a>
+                </div>
+                <ul class="tiles-grid" id="tiles-grid"></ul>
+            </section>
+
+            <section class="quote site-quote">
+                <h3 class="visually-hidden">Motivação</h3>
+                <blockquote>"O verdadeiro progresso acontece quando você sai da zona de conforto"</blockquote>
+                <cite>- Dorian Yates</cite>
+            </section>
+
+            <section id="aluno" class="home-section student-block" aria-labelledby="ttl-aluno">
+                <h3 id="ttl-aluno">Informações do Aluno</h3>
+                <div class="student-cols">
+                    <article class="student-col">
+                        <h4>Sobre</h4>
+                        <p>
+                            Sou <strong>Arthur Emmanuel Oliveira Marinho</strong>.
+                            Este projeto reúne videoaulas e conteudos sobre treino, técnicas e nutrição, sempre com
+                            referências de profissionais como Renato Cariani, Laércio Refundini, Júlio Balestrin, entre
+                            outros.
+                        </p>
+                    </article>
+
+                    <article class="student-col">
+                        <h4>Autoria</h4>
+                        <ul class="student-meta">
+                            <li>Curso: Sistemas de Informação</li>
+                            <li>Turma: DIW - G1/T1 2025/2</li>
+                            <li>E-mail: <a href="mailto:aeomarinho@sga.pucminas.br">aeomarinho@sga.pucminas.br</a></li>
+                        </ul>
+                    </article>
+
+                    <article class="student-col">
+                        <h4>Redes Sociais</h4>
+                        <p>
+                            <a href="https://github.com/emmanuel0704" class="social">GitHub</a>
+                            <a href="https://www.instagram.com/emmanuel0704" class="social">Instagram</a>
+                            <a href="https://www.linkedin.com/in/arthur-emmanuel-oliveira-marinho"
+                                class="social">Linkedin</a>
+                        </p>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer id="contato" class="site-footer">
+        <div class="container">
+            <p>© Arthur Emmanuel Oliveira Marinho</p>
+            <address>
+                <a href="mailto:aeomarinho@sga.pucminas.br">aeomarinho@sga.pucminas.br</a>
+            </address>
+        </div>
+    </footer>
+
+    <script src="app.js" defer></script>
+</body>
+
+</html>

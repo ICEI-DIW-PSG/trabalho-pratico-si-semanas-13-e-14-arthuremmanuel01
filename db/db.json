@@ -1,18 +1,114 @@
 {
-  "usuarios": [
+  "conteudos": [
     {
-      "id": "187cb7e5-e097-4224-8bc7-b610c855e2b1",
-      "login": "admin",
-      "senha": "123",
-      "nome": "Administrador do Sistema",
-      "email": "admin@abc.com"
+      "id": 1,
+      "videoId": "uQ_YDv9Zk30",
+      "titulo": "Todos Suplementos Explicados em MENOS de 10 Minutos!",
+      "resumo": "Whey, Creatina, Pré-Treino, Ômega-3 — e por que BCAA e L-Carnitina são desperdício.",
+      "categoria": "Nutrição",
+      "autor": "Laércio Refundini",
+      "data": "2025-09-24",
+      "destaque": true
     },
     {
-      "id": "ec37c83d-4b7f-458d-9e10-3fda7d37cd3e",
-      "login": "user",
-      "senha": "123",
-      "nome": "Usuario Comum",
-      "email": "user@abc.com"
+      "id": 2,
+      "videoId": "dsNKszftySQ",
+      "titulo": "ABC é a Píor Divisão de Treino! (ENTENDA)",
+      "resumo": "ABC pode arruinar seus ganhos: entenda o motivo e a alternativa.",
+      "categoria": "Treino",
+      "autor": "Laércio Refundini",
+      "data": "2025-09-01",
+      "destaque": false
+    },
+    {
+      "id": 3,
+      "videoId": "_T1lfZarhMs",
+      "titulo": "Truques Simples para ganhar músculos",
+      "resumo": "10 truques práticos para explodir o crescimento muscular.",
+      "categoria": "Treino",
+      "autor": "Laércio Refundini",
+      "data": "2025-06-23",
+      "destaque": true
+    },
+    {
+      "id": 4,
+      "videoId": "GuAJjmm7c5Q",
+      "titulo": "Periodização e Planejamento: Treinar de verdade pra evoluir!",
+      "resumo": "Organize seu treino em ciclos e evite estagnação.",
+      "categoria": "Planejamento",
+      "autor": "Laércio Refundini",
+      "data": "2025-09-02",
+      "destaque": false
+    },
+    {
+      "id": 5,
+      "videoId": "T3M9rCkcBM8",
+      "titulo": "Segredos de um Peitoral Gigante — Vídeo Aula",
+      "resumo": "Técnica, execução e pré-exaustão para maximizar o pump.",
+      "categoria": "Força",
+      "autor": "Renato Cariani",
+      "data": "2024-09-02",
+      "destaque": false
+    },
+    {
+      "id": 6,
+      "videoId": "IP2QqzOqDEk",
+      "titulo": "TÉCNICA SUBMÁXIMA: corrigindo pontos fracos",
+      "resumo": "Estímulo diário para aumentar angiogênese e corrigir déficits.",
+      "categoria": "Treino",
+      "autor": "Renato Cariani",
+      "data": "2020-09-07",
+      "destaque": true
+    },
+    {
+      "id": 7,
+      "videoId": "o2rwxw12nag",
+      "titulo": "3 técnicas para um agachamento perfeito",
+      "resumo": "Execuções diferentes, segurança e progresso.",
+      "categoria": "Treino",
+      "autor": "Renato Cariani",
+      "data": "2024-05-28",
+      "destaque": false
+    },
+    {
+      "id": 8,
+      "videoId": "lcptIMTX444",
+      "titulo": "Secar e construir músculos ao mesmo tempo",
+      "resumo": "O papel de treino forte, proteína, carbos e gorduras.",
+      "categoria": "Nutrição",
+      "autor": "Renato Cariani",
+      "data": "2025-08-26",
+      "destaque": false
+    },
+    {
+      "id": 9,
+      "videoId": "wJBof_K85YY",
+      "titulo": "Monte sua dieta — passo a passo!",
+      "resumo": "Guia de 2.000 kcal e regra 33% para macros.",
+      "categoria": "Nutrição",
+      "autor": "Renato Cariani",
+      "data": "2021-05-07",
+      "destaque": true
+    },
+    {
+      "id": 10,
+      "videoId": "4_HEU62cksU",
+      "titulo": "10 dicas para melhorar seu treino",
+      "resumo": "Básico bem feito, cadência excêntrica e progressão real.",
+      "categoria": "Treino",
+      "autor": "Leandro Twin",
+      "data": "2021-07-25",
+      "destaque": true
+    },
+    {
+      "titulo": "O SEGREDO PARA DESINCHAR EM 7 DIAS",
+      "resumo": "",
+      "categoria": "Nutrição",
+      "autor": "Renato Cariani",
+      "data": "2024-04-10",
+      "videoId": "k7TjTPFa08E?si=PBvIygakg7HjHV57",
+      "destaque": false,
+      "id": 11
     }
   ]
 }

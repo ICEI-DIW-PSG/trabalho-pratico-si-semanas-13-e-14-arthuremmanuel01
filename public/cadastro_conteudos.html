@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit Web • Novo Conteúdo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="site-header" id="topo" aria-label="Cabeçalho">
+        <div class="container header-wrap">
+            <a href="index.html#inicio" class="brand" aria-label="Fit Web - Página Inicial">
+                <img src="imgs/logo.png" alt="Fit Web - Treining Hub" width="250">
+            </a>
+            <button class="nav-toggle" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menu">
+                <span class="lines" aria-hidden="true"></span>
+            </button>
+            <nav class="main-nav" id="mainNav" aria-label="Navegação principal">
+                <ul>
+                    <li><a href="index.html#inicio">Início</a></li>
+                    <li><a href="conteudos.html">Conteúdos</a></li>
+                    <li><a href="categorias.html">Categorias</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="content-bg">
+        <div class="container" style="max-width:820px">
+            <h1 style="color:var(--brand); text-transform:uppercase; letter-spacing:.25em;">Cadastrar conteúdo</h1>
+            <form id="formNovo" class="form-grid" novalidate>
+                <label>Título
+                    <input required name="titulo" placeholder="Ex.: 10 dicas para melhorar seu treino">
+                </label>
+                <label>Resumo
+                    <textarea required name="resumo" placeholder="Descrição breve do conteúdo"></textarea>
+                </label>
+                <label>Categoria
+                    <select name="categoria" required>
+                        <option value="Treino">Treino</option>
+                        <option value="Nutrição">Nutrição</option>
+                        <option value="Planejamento">Planejamento</option>
+                        <option value="Força">Força</option>
+                    </select>
+                </label>
+                <label>Autor
+                    <input required name="autor" placeholder="Nome do autor">
+                </label>
+                <label>Data
+                    <input required type="date" name="data">
+                </label>
+                <label>Video ID (YouTube)
+                    <input required name="videoId" placeholder="Ex.: uQ_YDv9Zk30">
+                </label>
+                <label>Destaque?
+                    <select name="destaque">
+                        <option value="false" selected>Não</option>
+                        <option value="true">Sim</option>
+                    </select>
+                </label>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">Salvar</button>
+                    <a class="btn btn-outline" href="index.html">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>© Arthur Emmanuel Oliveira Marinho</p>
+            <address><a href="mailto:aeomarinho@sga.pucminas.br">aeomarinho@sga.pucminas.br</a></address>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        async function createConteudo(data) {
+            const res = await fetch(`${location.origin}/conteudos`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            if (!res.ok) throw new Error("Erro ao criar");
+            return res.json();
+        }
+
+        const form = document.getElementById("formNovo");
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const fd = new FormData(form);
+            const novo = {
+                titulo: String(fd.get("titulo")).trim(),
+                resumo: String(fd.get("resumo")).trim(),
+                categoria: String(fd.get("categoria")).trim(),
+                autor: String(fd.get("autor")).trim(),
+                data: String(fd.get("data")).trim(),
+                videoId: String(fd.get("videoId")).trim(),
+                destaque: String(fd.get("destaque")) === "true"
+            };
+            try {
+                const created = await createConteudo(novo);
+                alert("Criado com sucesso!");
+                location.href = `detalhes.html?id=${created.id}`;
+            } catch (err) {
+                alert("Falha ao criar: " + err.message);
+            }
+        });
+    </script>
+</body>
+
+</html>
