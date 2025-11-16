@@ -38,8 +38,8 @@ const api = {
 
 //  Estado simples compartilhado 
 const state = {
-  itens: [],               
-  filtroCategoria: "Todas" 
+  itens: [],
+  filtroCategoria: "Todas"
 };
 
 // HOME (carrossel + grid) 
@@ -337,7 +337,7 @@ async function initDetalhesPage() {
 function initChartsPage() {
   const canCat = document.getElementById("chartCategorias");
   const canMon = document.getElementById("chartMensal");
-  if (!canCat || !canMon) return; 
+  if (!canCat || !canMon) return;
 
   const byCategory = state.itens.reduce((acc, it) => {
     acc[it.categoria] = (acc[it.categoria] || 0) + 1;
@@ -352,8 +352,8 @@ function initChartsPage() {
     acc[ym] = (acc[ym] || 0) + 1;
     return acc;
   }, {});
-  const monLabels = Object.keys(byMonth).sort();      
-  const monCounts = monLabels.map(k => byMonth[k]);       
+  const monLabels = Object.keys(byMonth).sort();
+  const monCounts = monLabels.map(k => byMonth[k]);
 
   //  Criação dos gráficos (Chart.js) 
   const catChart = new Chart(canCat.getContext("2d"), {
@@ -388,7 +388,7 @@ function initChartsPage() {
   //  Botão "Atualizar dados"
   document.getElementById("btnRefreshCharts")?.addEventListener("click", async () => {
     try {
-      state.itens = await api.list({ _sort: "id", _order: "desc" }); 
+      state.itens = await api.list({ _sort: "id", _order: "desc" });
     } catch (err) {
       alert("Falha ao atualizar dados: " + err.message);
       return;
